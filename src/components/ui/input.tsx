@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  prefix: string
+  prefix?: string
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -13,6 +13,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div
         className={cn(
           'flex h-10 items-baseline rounded-md border border-l-gray-900 bg-gray-900 px-4 text-sm outline-8 outline-red-500 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-within:ring-2 focus-within:ring-ring has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50',
+          className,
         )}
       >
         {prefix && (

@@ -39,7 +39,7 @@ export function ClaimUsernameForm() {
         <Input
           className="w-full bg-gray-900"
           placeholder="seu-usuario"
-          prefix="ignite.com/"
+          prefix="dev.cal.com/"
           {...register('username')}
         />
         <Button isLoading={isSubmitting}>
