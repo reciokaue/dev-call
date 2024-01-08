@@ -1,7 +1,8 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -26,12 +27,12 @@ export function ClaimUsernameForm() {
     resolver: zodResolver(schema),
   })
 
+  const router = useRouter()
+
   async function handle(data: Props) {
-    return new Promise(() =>
-      setTimeout(() => {
-        console.log(data)
-      }, 2000),
-    )
+    const { username } = data
+
+    router.push(`/register?username=${username}`)
   }
   return (
     <form onSubmit={handleSubmit(handle)} className="flex flex-col">
@@ -42,7 +43,7 @@ export function ClaimUsernameForm() {
           prefix="dev.cal.com/"
           {...register('username')}
         />
-        <Button isLoading={isSubmitting}>
+        <Button disabled={isSubmitting}>
           Reservar
           <ArrowRight className="h-4 w-4" />
         </Button>

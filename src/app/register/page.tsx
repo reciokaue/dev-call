@@ -2,6 +2,8 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowRight } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -23,12 +25,22 @@ export default function Page() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { isSubmitting, errors },
   } = useForm<Props>({
     resolver: zodResolver(schema),
   })
 
-  async function handleSign(data: Props) {}
+  const searchParams = useSearchParams()
+  const username = searchParams.get('username')
+
+  async function handleSign(data: Props) {
+    console.log(data)
+  }
+
+  useEffect(() => {
+    if (username) setValue('username', username)
+  }, [setValue, username])
 
   return (
     <div className="mx-auto flex h-screen max-w-[500px] flex-col items-center justify-center">
@@ -72,7 +84,7 @@ export default function Page() {
         </div>
         <Button className="w-full">
           Proximo passo
-          <ArrowRight />
+          <ArrowRight className="h-4 w-4" />
         </Button>
       </form>
     </div>
