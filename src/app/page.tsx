@@ -1,5 +1,6 @@
 import Image from 'next/image'
 
+import { ClaimUsernameForm } from '@/components/ClaimUsernameForm'
 import { Button } from '@/components/ui/button'
 
 export default function Home() {
@@ -14,11 +15,9 @@ export default function Home() {
             Conecte seu calendário e permita que as pessoas marquem agendamentos
             no seu tempo livre.
           </p>
-          <Button variant="default" className="mt-10">
-            Criar conta com Google
-          </Button>
+          <ClaimUsernameForm />
 
-          <picture className="absolute -left-60 top-1/2 h-[681px] w-[1208px] -translate-y-1/2">
+          <picture className="absolute -left-60 top-1/2 -z-50 h-[681px] w-[1208px] -translate-y-1/2">
             <Image
               className="w-full flex-shrink-0"
               src="/images/hero-background.png"
