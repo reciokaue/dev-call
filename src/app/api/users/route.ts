@@ -1,6 +1,8 @@
+import { setCookie } from 'nookies'
+
 import { prisma } from '@/lib/prisma'
 
-export async function POST(req: Request) {
+export async function POST(req: Request, res: Response) {
   const data = await req.json()
   const { name, username } = data
 
@@ -19,6 +21,11 @@ export async function POST(req: Request) {
       name,
       username,
     },
+  })
+
+  setCookie({ res }, '@dev.call:userId', user.id, {
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    path: '/',
   })
 
   return Response.json(user, { status: 201 })
