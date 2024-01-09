@@ -32,7 +32,7 @@ export function ClaimUsernameForm() {
   async function handle(data: Props) {
     const { username } = data
 
-    router.push(`/register?username=${username}`)
+    router.push(`/register/1/welcome?username=${username}`)
   }
   return (
     <form onSubmit={handleSubmit(handle)} className="flex flex-col">
