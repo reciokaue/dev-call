@@ -27,6 +27,7 @@ export default function Page() {
     register,
     handleSubmit,
     setValue,
+    setError,
     formState: { isSubmitting, errors },
   } = useForm<Props>({
     resolver: zodResolver(schema),
@@ -41,7 +42,14 @@ export default function Page() {
         name: data.name,
         username: data.username,
       })
-    } catch (err) {
+    } catch (err: any) {
+      const message = err?.response?.data?.message
+
+      if (message === 'Username already exists')
+        return setError('username', {
+          message: `O username "${data.username}" já existe`,
+        })
+
       console.log(err)
     }
   }
@@ -86,9 +94,7 @@ export default function Page() {
             placeholder="Seu nome"
             {...register('name')}
           />
-          <span className="text-sm text-red-500 ">
-            {errors.username?.message}
-          </span>
+          <span className="text-sm text-red-500 ">{errors.name?.message}</span>
         </div>
         <Button disabled={isSubmitting} className="w-full">
           Proximo passo
