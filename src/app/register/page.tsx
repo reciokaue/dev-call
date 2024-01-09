@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { MultiStep } from '@/components/multi-step'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { api } from '@/lib/axios'
 
 const schema = z.object({
   username: z
@@ -35,7 +36,14 @@ export default function Page() {
   const username = searchParams.get('username')
 
   async function handleSign(data: Props) {
-    console.log(data)
+    try {
+      await api.post('/users', {
+        name: data.name,
+        username: data.username,
+      })
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   useEffect(() => {
@@ -82,7 +90,7 @@ export default function Page() {
             {errors.username?.message}
           </span>
         </div>
-        <Button className="w-full">
+        <Button disabled={isSubmitting} className="w-full">
           Proximo passo
           <ArrowRight className="h-4 w-4" />
         </Button>
