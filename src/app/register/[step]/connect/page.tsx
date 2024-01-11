@@ -1,6 +1,7 @@
 'use client'
 
-import { ChevronRight } from 'lucide-react'
+import { Check, ChevronRight } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 
@@ -9,9 +10,14 @@ import { getCurrentUser } from '@/lib/session'
 
 export default function Connect() {
   const [user, setUser] = useState<any>()
+  const searchParams = useSearchParams()
+  const error = searchParams.get('error')
 
-  function handleSignIn() {
-    signIn('google')
+  const hasAuthError = error === 'permissions'
+  const isSignedIn = !!user
+
+  async function handleSignIn() {
+    await signIn('google')
   }
 
   useEffect(() => {
@@ -20,7 +26,7 @@ export default function Connect() {
       setUser(session)
     }
     getUserData()
-  }, [])
+  }, [searchParams])
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -28,19 +34,32 @@ export default function Connect() {
         <span className="text-base leading-relaxed text-gray-100">
           Google Calendar
         </span>
-        <Button
-          onClick={handleSignIn}
-          className="border-white bg-transparent hover:bg-white hover:text-gray-700"
-          variant="outline"
-        >
-          Conectar
-        </Button>
+        {isSignedIn ? (
+          <Button disabled size="sm">
+            Conectado <Check className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button
+            onClick={handleSignIn}
+            className="border-white bg-transparent hover:bg-white hover:text-gray-700"
+            variant="outline"
+            size="sm"
+          >
+            Conectar
+          </Button>
+        )}
       </div>
-      {JSON.stringify(user)}
-      <Button disabled={true}>
+      {hasAuthError && (
+        <span className="mb-2 text-sm text-red-500">
+          Falha ao se conectar ao Google, verifique se você habilitou as
+          permissões de acesso ao Google Calendar
+        </span>
+      )}
+      <Button disabled={!isSignedIn}>
         Proximo passo
         <ChevronRight className="h-4 w-4" />
       </Button>
+      {JSON.stringify(user)}
     </div>
   )
 }

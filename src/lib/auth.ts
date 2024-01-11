@@ -18,11 +18,20 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ account }) {
-      if (!account?.scope?.includes(scopes)) {
-        return 'http://localhost:3000/register/2/connect?error=permissions'
-      }
+      const accountScopes = account?.scope?.split(' ')
+      const scopesArray = scopes.split(' ')
 
-      return true
+      const includeScopes =
+        accountScopes &&
+        scopesArray.every((scope) => accountScopes.includes(scope))
+
+      console.log('Result', !includeScopes)
+
+      if (!includeScopes) {
+        return 'http://localhost:3000/register/2/connect?error=permissions'
+      } else {
+        return 'http://localhost:3000/register/2/connect'
+      }
     },
   },
 }
