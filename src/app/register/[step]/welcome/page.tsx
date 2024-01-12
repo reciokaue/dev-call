@@ -7,9 +7,9 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { api } from '@/lib/axios'
+import { Button } from '../../../../components/ui/button'
+import { Input } from '../../../../components/ui/input'
+import { api } from '../../../../lib/axios'
 
 const schema = z.object({
   username: z
@@ -38,10 +38,10 @@ export default function RegisterWelcome() {
 
   async function handleSign(data: Props) {
     try {
-      // await api.post('/users', {
-      //   name: data.name,
-      //   username: data.username,
-      // })
+      await api.post('/users', {
+        name: data.name,
+        username: data.username,
+      })
 
       router.push('/register/2/connect')
     } catch (err: any) {

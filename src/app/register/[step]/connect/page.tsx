@@ -5,8 +5,8 @@ import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { getCurrentUser } from '@/lib/session'
+import { Button } from '../../../../components/ui/button'
+import { getCurrentUser } from '../../../../lib/session'
 
 export default function Connect() {
   const [user, setUser] = useState<any>()
@@ -22,6 +22,7 @@ export default function Connect() {
 
   useEffect(() => {
     async function getUserData() {
+      console.log('try')
       const session = await getCurrentUser()
       setUser(session)
     }

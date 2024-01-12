@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { MultiStep } from '@/components/multi-step'
+import { MultiStep } from '../../../components/multi-step'
 
 import { HEADERS } from './headers'
 

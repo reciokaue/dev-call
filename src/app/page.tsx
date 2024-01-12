@@ -1,7 +1,7 @@
 import Image from 'next/image'
 
-import { ClaimUsernameForm } from '@/components/ClaimUsernameForm'
-import { Button } from '@/components/ui/button'
+import { ClaimUsernameForm } from '../components/ClaimUsernameForm'
+import { Button } from '../components/ui/button'
 
 export default function Home() {
   return (
