@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import { convertTimeStringToMinutes } from '@/utils/convert-time-string-to-minutes'
 import { weekDays } from '@/utils/get-week-day'
 
 const schema = z.object({
@@ -24,9 +25,31 @@ const schema = z.object({
     .transform((intervals) => intervals.filter((interval) => interval.enabled))
     .refine((intervals) => intervals.length > 0, {
       message: 'Você precisa selecionar pelo menos um dia da semana!',
-    }),
+    })
+    .transform((intervals) => {
+      return intervals.map((interval) => {
+        return {
+          weekDay: interval.weekDay,
+          startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
+          endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
+        }
+      })
+    })
+    .refine(
+      (intervals) => {
+        return intervals.every(
+          (interval) =>
+            interval.endTimeInMinutes - 30 >= interval.startTimeInMinutes,
+        )
+      },
+      {
+        message:
+          'O horário do término de ser ao menos 30 minutos depois do inicio',
+      },
+    ),
 })
-type Props = z.infer<typeof schema>
+type PropsInput = z.input<typeof schema>
+type PropsOutput = z.output<typeof schema>
 
 export default function TimeIntervals() {
   const {
@@ -35,7 +58,7 @@ export default function TimeIntervals() {
     control,
     watch,
     formState: { isSubmitting, errors },
-  } = useForm<Props>({
+  } = useForm<PropsInput, any, PropsOutput>({
     resolver: zodResolver(schema),
     defaultValues: {
       intervals: [
@@ -56,22 +79,23 @@ export default function TimeIntervals() {
   })
   const intervals = watch('intervals')
 
-  async function SetTimeIntervals(data: Props) {
+  async function SetTimeIntervals(data: PropsOutput) {
     console.log(data)
   }
 
   return (
     <form
       onSubmit={handleSubmit(SetTimeIntervals)}
-      className="flex w-full flex-col items-center gap-6"
+      className="flex w-full flex-col items-start gap-4"
     >
       <div className="flex w-full flex-col items-start rounded-md border border-gray-600">
         {fields.map((field, index) => (
-          <div
+          <label
             key={field.id}
-            className="flex w-full items-center justify-between border-t border-gray-600 px-4 py-3 first:border-0"
+            htmlFor={weekDays[field.weekDay]}
+            className="flex w-full cursor-pointer items-center justify-between border-t border-gray-600 px-4 py-3 first:border-0"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex w-full items-center gap-3">
               <Controller
                 control={control}
                 name={`intervals.${index}.enabled`}
@@ -85,12 +109,9 @@ export default function TimeIntervals() {
                   />
                 )}
               />
-              <label
-                htmlFor={weekDays[field.weekDay]}
-                className="text-base leading-relaxed text-gray-100"
-              >
+              <span className="text-base leading-relaxed text-gray-100">
                 {weekDays[field.weekDay]}
-              </label>
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Input
@@ -108,10 +129,13 @@ export default function TimeIntervals() {
                 {...register(`intervals.${index}.endTime`)}
               />
             </div>
-          </div>
+          </label>
         ))}
       </div>
-      <Button className="w-full">
+      <span className="text-sm text-red-500">
+        {errors.intervals?.root?.message}
+      </span>
+      <Button className="w-full" type="submit" disabled={isSubmitting}>
         Proximo passo
         <ChevronRight className="h-4 w-4" />
       </Button>
