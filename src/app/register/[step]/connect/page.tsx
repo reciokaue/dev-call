@@ -60,7 +60,6 @@ export default function Connect() {
         Proximo passo
         <ChevronRight className="h-4 w-4" />
       </Button>
-      {JSON.stringify(user)}
     </div>
   )
 }

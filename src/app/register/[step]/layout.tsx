@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 
 import { MultiStep } from '../../../components/multi-step'
-
 import { HEADERS } from './headers'
 
 export const metadata: Metadata = {
@@ -19,7 +18,7 @@ export default function RootLayout({ children, params }: LayoutParams) {
   const { step } = params
 
   return (
-    <div className="mx-auto flex h-screen max-w-[500px] flex-col items-center justify-start pt-40">
+    <div className="mx-auto flex h-screen max-w-[500px] flex-col items-center justify-start pt-20">
       <div className="flex flex-col items-start self-stretch px-6">
         <h1 className="text-2xl font-bold leading-relaxed text-white">
           {HEADERS[step - 1].title}

@@ -72,11 +72,12 @@
   margin: 0;
   padding: 0;
 }
-/* 
-h1, h2, h3, p, body, input, textarea, button {
-  font-family: 'Roboto' sans-serif;
-  font-weight: 400;
-} */
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(100%) brightness(30%)
+}
+
 
 @layer base {
   * {
