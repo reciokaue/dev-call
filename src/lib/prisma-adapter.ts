@@ -171,15 +171,16 @@ export function PrismaAdapter(): Adapter {
         },
       }
     },
-    async updateSession({ sessionToken, userId, expires }) {
+    async updateSession({ sessionToken, expires, userId }) {
       console.log('updateSession')
+      console.log('DATA', userId)
+
       const session = await prisma.session.update({
         where: {
           id: sessionToken,
         },
         data: {
           expires,
-          user_id: userId,
         },
       })
 

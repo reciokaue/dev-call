@@ -1,9 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth from 'next-auth'
 
-import { buildNextAuthOptions } from '../../../../lib/auth'
-
-const authOptions = buildNextAuthOptions()
+import { authOptions } from '../../../../lib/auth'
 
 const handler = (req: NextApiRequest, res: NextApiResponse) =>
   NextAuth(req, res, authOptions)

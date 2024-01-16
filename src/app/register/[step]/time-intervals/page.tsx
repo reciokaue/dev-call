@@ -3,53 +3,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronRight } from 'lucide-react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
-import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
-import { convertTimeStringToMinutes } from '@/utils/convert-time-string-to-minutes'
+import { api } from '@/lib/axios'
 import { weekDays } from '@/utils/get-week-day'
-
-const schema = z.object({
-  intervals: z
-    .array(
-      z.object({
-        weekDay: z.number().min(0).max(6),
-        enabled: z.boolean(),
-        startTime: z.string(),
-        endTime: z.string(),
-      }),
-    )
-    .length(7)
-    .transform((intervals) => intervals.filter((interval) => interval.enabled))
-    .refine((intervals) => intervals.length > 0, {
-      message: 'Você precisa selecionar pelo menos um dia da semana!',
-    })
-    .transform((intervals) => {
-      return intervals.map((interval) => {
-        return {
-          weekDay: interval.weekDay,
-          startTimeInMinutes: convertTimeStringToMinutes(interval.startTime),
-          endTimeInMinutes: convertTimeStringToMinutes(interval.endTime),
-        }
-      })
-    })
-    .refine(
-      (intervals) => {
-        return intervals.every(
-          (interval) =>
-            interval.endTimeInMinutes - 30 >= interval.startTimeInMinutes,
-        )
-      },
-      {
-        message:
-          'O horário do término de ser ao menos 30 minutos depois do inicio',
-      },
-    ),
-})
-type PropsInput = z.input<typeof schema>
-type PropsOutput = z.output<typeof schema>
+import {
+  TimeIntervalsPropsInput,
+  TimeIntervalsPropsOutput,
+  timeIntervalsSchema,
+} from '@/utils/schemas/time-intervals'
 
 export default function TimeIntervals() {
   const {
@@ -58,8 +22,8 @@ export default function TimeIntervals() {
     control,
     watch,
     formState: { isSubmitting, errors },
-  } = useForm<PropsInput, any, PropsOutput>({
-    resolver: zodResolver(schema),
+  } = useForm<TimeIntervalsPropsInput, any, TimeIntervalsPropsOutput>({
+    resolver: zodResolver(timeIntervalsSchema),
     defaultValues: {
       intervals: [
         { weekDay: 0, enabled: false, startTime: '08:00', endTime: '18:00' },
@@ -79,8 +43,15 @@ export default function TimeIntervals() {
   })
   const intervals = watch('intervals')
 
-  async function SetTimeIntervals(data: PropsOutput) {
-    console.log(data)
+  async function SetTimeIntervals(data: TimeIntervalsPropsOutput) {
+    try {
+      await api.post('/users/time-intervals', {
+        formData: data,
+      })
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (

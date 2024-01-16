@@ -1,7 +1,7 @@
 'use client'
 
 import { Check, ChevronRight } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 
@@ -12,12 +12,17 @@ export default function Connect() {
   const [user, setUser] = useState<any>()
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
+  const router = useRouter()
 
   const hasAuthError = error === 'permissions'
   const isSignedIn = !!user
 
   async function handleSignIn() {
     await signIn('google')
+  }
+
+  async function handleNextStep() {
+    router.push('/register/3/time-intervals')
   }
 
   useEffect(() => {
@@ -56,7 +61,7 @@ export default function Connect() {
           permissões de acesso ao Google Calendar
         </span>
       )}
-      <Button disabled={!isSignedIn}>
+      <Button onClick={handleNextStep} disabled={!isSignedIn}>
         Proximo passo
         <ChevronRight className="h-4 w-4" />
       </Button>
