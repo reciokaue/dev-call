@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
@@ -36,6 +37,7 @@ export default function TimeIntervals() {
       ],
     },
   })
+  const router = useRouter()
 
   const { fields } = useFieldArray({
     control,
@@ -48,7 +50,7 @@ export default function TimeIntervals() {
       await api.post('/users/time-intervals', {
         formData: data,
       })
-      console.log(data)
+      router.push('/register/4/update-profile')
     } catch (error) {
       console.log(error)
     }

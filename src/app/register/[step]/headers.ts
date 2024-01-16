@@ -10,12 +10,12 @@ export const HEADERS = [
       'Conecte o seu calendário para verificar automaticamente as horas ocupadas e os novos eventos à medida em que são agendados.',
   },
   {
-    title: 'Quase lá',
+    title: 'Defina sua disponibilidade',
     subtitle:
       'Defina o intervalo de horários que você está disponível em cada dia da semana.',
   },
   {
-    title: 'Defina sua disponibilidade',
+    title: 'Quase lá',
     subtitle: 'Por último, uma breve descrição e uma foto de perfil.',
   },
 ]
