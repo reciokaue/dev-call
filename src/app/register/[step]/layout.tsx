@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 
+import { getCurrentUser } from '@/lib/session'
+
 import { MultiStep } from '../../../components/multi-step'
 import { HEADERS } from './headers'
 
@@ -14,11 +16,11 @@ interface LayoutParams {
   }
 }
 
-export default function RootLayout({ children, params }: LayoutParams) {
+export default async function RootLayout({ children, params }: LayoutParams) {
   const { step } = params
 
   return (
-    <div className="mx-auto flex h-screen max-w-[500px] flex-col items-center justify-start pt-20">
+    <div className="mx-auto flex h-screen max-w-[540px] flex-col items-center justify-start pt-20">
       <div className="flex flex-col items-start self-stretch px-6">
         <h1 className="text-2xl font-bold leading-relaxed text-white">
           {HEADERS[step - 1].title}

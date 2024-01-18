@@ -8,8 +8,8 @@ export async function POST(req: Request) {
   const { formData } = data
   const { intervals }: TimeIntervalsPropsOutput = formData
 
-  const session = await getCurrentUser()
-  if (!session)
+  const user = await getCurrentUser()
+  if (!user)
     return Response.json({ message: 'User not authenticated' }, { status: 401 })
 
   await Promise.all(
@@ -19,11 +19,11 @@ export async function POST(req: Request) {
           week_day: interval.weekDay,
           time_start_in_minutes: interval.startTimeInMinutes,
           time_end_in_minutes: interval.endTimeInMinutes,
-          user_id: session.id,
+          user_id: user.id,
         },
       })
     }),
   )
 
-  return Response.json(session, { status: 201 })
+  return Response.json(user, { status: 201 })
 }

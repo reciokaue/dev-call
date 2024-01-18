@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next'
 
 import { authOptions } from './auth'
 
-interface UserProps {
+export interface UserProps {
   created_at: Date
   email: string
   emailVerified: string

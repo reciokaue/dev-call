@@ -27,7 +27,6 @@ export default function Connect() {
 
   useEffect(() => {
     async function getUserData() {
-      console.log('try')
       const session = await getCurrentUser()
       setUser(session)
     }
