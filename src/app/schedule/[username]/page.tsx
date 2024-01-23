@@ -1,7 +1,10 @@
+import { Slot } from '@radix-ui/react-slot'
 import Image from 'next/image'
 
-import { Calendar } from '@/components/calendar'
 import { prisma } from '@/lib/prisma'
+
+import { CalendarStep } from './CalendarStep'
+import { ConfirmStep } from './ConfirmStep'
 
 export const revalidate = 60 * 60 * 24 // 1 day
 async function getUser(username: string) {
@@ -21,7 +24,7 @@ export default async function UserSchedule({ params }: UserScheduleProps) {
   const user = await getUser(params.username)
 
   return (
-    <div className="mx-auto mb-4 mt-20  flex flex-col items-center px-4">
+    <div className="relative mx-auto mb-4 flex flex-col  items-center overflow-hidden px-4 pt-20">
       <header className="flex flex-col items-center justify-center">
         <div className="mb-2 h-16 w-16 flex-shrink-0 overflow-hidden rounded-full  bg-gray-200">
           {user?.avatar_url && (
@@ -38,8 +41,9 @@ export default async function UserSchedule({ params }: UserScheduleProps) {
         </h1>
         <p className="text-sm leading-relaxed text-gray-200">{user?.bio}</p>
       </header>
-      <div className="mt-6 flex w-fit max-w-[852px] items-center justify-between gap-4 rounded-lg border border-gray-600 bg-gray-800 p-6">
-        <Calendar />
+      <div className="mt-6 w-fit max-w-[852px] rounded-lg border border-gray-600 bg-gray-800 p-6">
+        {/* <CalendarStep /> */}
+        <ConfirmStep />
       </div>
     </div>
   )
