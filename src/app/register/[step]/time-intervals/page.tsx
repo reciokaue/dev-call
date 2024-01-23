@@ -82,7 +82,7 @@ export default function TimeIntervals() {
                   />
                 )}
               />
-              <span className="text-base leading-relaxed text-gray-100">
+              <span className="text-base capitalize leading-relaxed text-gray-100">
                 {weekDays[field.weekDay]}
               </span>
             </div>

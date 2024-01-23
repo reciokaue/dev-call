@@ -78,6 +78,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(100%) brightness(30%)
 }
 
+p, button, textarea, input, table, h1, h2, h3 {
+  font-family: Roboto, sans-serif
+}
+
+/* td {
+  box-sizing: border-box
+} */
+
 
 @layer base {
   * {
