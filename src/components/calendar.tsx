@@ -1,6 +1,5 @@
 'use client'
 
-// interface CalendarProps {}
 import '../lib/dayjs'
 
 import dayjs from 'dayjs'
@@ -11,12 +10,17 @@ import { shortWeekDays } from '@/utils/get-week-day'
 
 import { Button } from './ui/button'
 
+interface CalendarProps {
+  selectedDate?: Date | null
+  onDateSelected: (date: Date) => void
+}
+
 interface CalendarWeeks {
   date: dayjs.Dayjs
   disabled: boolean
 }
 
-export function Calendar() {
+export function Calendar({ onDateSelected, selectedDate }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => {
     return dayjs().set('date', 1)
   })
@@ -48,7 +52,8 @@ export function Calendar() {
 
     const disable = (array: any[], disabled: boolean) =>
       array.map((date: dayjs.Dayjs) => {
-        return { date, disabled }
+        const isDisabled = disabled ? true : date.endOf('day').isBefore()
+        return { date, disabled: isDisabled }
       })
 
     const allDays = [
@@ -79,7 +84,7 @@ export function Calendar() {
   }
 
   return (
-    <div className="flex w-full max-w-[540px] flex-col gap-6">
+    <div className="flex w-[540px] flex-col gap-6 p-6">
       <header className="flex items-center justify-between">
         <h1 className="text-base font-medium capitalize leading-relaxed text-white">
           {currentMonth} <span className="text-gray-200">{currentYear}</span>
@@ -114,13 +119,14 @@ export function Calendar() {
         <tbody className='before:block before:leading-3 before:text-gray-800 before:content-["."]'>
           {calendarWeeks.map((week, index) => (
             <tr key={`week-${index}`}>
-              {week.map((day) => (
-                <td className="box-border" key={day.date.toString()}>
+              {week.map(({ date, disabled }) => (
+                <td className="box-border" key={date.toString()}>
                   <button
-                    disabled={day?.disabled}
+                    onClick={() => onDateSelected(date.toDate())}
+                    disabled={disabled}
                     className="aspect-square w-full rounded-sm bg-gray-600 text-center  transition-colors hover:bg-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-100 focus:ring-offset-1 disabled:pointer-events-none disabled:bg-transparent"
                   >
-                    {day.date.format('DD')}
+                    {date.format('DD')}
                   </button>
                 </td>
               ))}

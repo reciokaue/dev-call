@@ -41,7 +41,7 @@ export default async function UserSchedule({ params }: UserScheduleProps) {
         </h1>
         <p className="text-sm leading-relaxed text-gray-200">{user?.bio}</p>
       </header>
-      <div className="mt-6 w-auto min-w-[540px] max-w-[852px] rounded-lg border border-gray-600 bg-gray-800 p-6">
+      <div className="mt-6 w-auto max-w-[820px] rounded-lg border border-gray-600 bg-gray-800">
         <CalendarStep />
         {/* <ConfirmStep /> */}
       </div>

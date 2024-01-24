@@ -1,16 +1,23 @@
+'use client'
+import { useState } from 'react'
+
 import { Calendar } from '@/components/calendar'
 
 export function CalendarStep() {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const isDateSelected = !!selectedDate
+
   return (
     <div className="relative flex items-start justify-between">
-      <Calendar />
-      {true && (
-        <div className="flex w-full max-w-[280px] flex-col pl-6">
-          <header className="h-10 text-base font-medium leading-relaxed text-white">
+      <Calendar onDateSelected={setSelectedDate} selectedDate={selectedDate} />
+
+      {isDateSelected && (
+        <div className="flex w-[280px] flex-col pl-6">
+          <header className="h-10 pt-6 text-base font-medium leading-relaxed text-white">
             Terça-feira <span className="text-gray-200">23 de janeiro</span>
           </header>
-          <div className="absolute bottom-0 right-0 top-10 flex w-[calc(280px-24px)] flex-col overflow-y-scroll">
-            <section className="grid grid-flow-col grid-rows-1 gap-2 md:grid-flow-row md:grid-cols-1">
+          <div className="absolute bottom-0 right-0 top-16 flex w-[280px] flex-col overflow-y-scroll pr-6">
+            <section className="grid grid-flow-col grid-rows-1 items-center gap-2 md:grid-flow-row md:grid-cols-1">
               {HOURS.map((hour) => (
                 <button
                   disabled={hour === '14:00'}
