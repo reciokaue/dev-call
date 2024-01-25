@@ -26,7 +26,8 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
   const referenceDate = dayjs(date)
   const isPastDate = referenceDate.endOf('day').isBefore(new Date())
 
-  if (isPastDate) return Response.json({ availability: [] })
+  if (isPastDate)
+    return Response.json({ possibleTimes: [], availableTimes: [] })
 
   const userAvailability = await prisma.userTimeInterval.findFirst({
     where: {
@@ -35,7 +36,8 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     },
   })
 
-  if (!userAvailability) return Response.json({ availability: [] })
+  if (!userAvailability)
+    return Response.json({ possibleTimes: [], availableTimes: [] })
 
   const { time_end_in_minutes, time_start_in_minutes } = userAvailability
 
@@ -60,11 +62,11 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     },
   })
 
-  const availableTime = possibleTimes.filter((time) => {
+  const availableTimes = possibleTimes.filter((time) => {
     return !blockedTimes.some(
       (blockedTimes) => blockedTimes.date.getHours() === time,
     )
   })
 
-  return Response.json({ possibleTimes, availableTime }, { status: 201 })
+  return Response.json({ possibleTimes, availableTimes }, { status: 201 })
 }

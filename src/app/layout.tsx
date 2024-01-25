@@ -3,6 +3,8 @@ import '../styles/globals.css'
 import type { Metadata } from 'next'
 import { Roboto } from 'next/font/google'
 
+import { ProviderQueryClient } from '@/utils/react-query'
+
 import { cn } from '../lib/utils'
 
 const roboto = Roboto({
@@ -28,7 +30,7 @@ export default function RootLayout({
           roboto.className,
         )}
       >
-        {children}
+        <ProviderQueryClient>{children}</ProviderQueryClient>
       </body>
     </html>
   )

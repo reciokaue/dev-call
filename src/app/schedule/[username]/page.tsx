@@ -14,7 +14,7 @@ async function getUser(username: string) {
   return user
 }
 
-interface UserScheduleProps {
+export interface UserScheduleProps {
   params: {
     username: string
   }
@@ -42,7 +42,7 @@ export default async function UserSchedule({ params }: UserScheduleProps) {
         <p className="text-sm leading-relaxed text-gray-200">{user?.bio}</p>
       </header>
       <div className="mt-6 w-auto max-w-[820px] rounded-lg border border-gray-600 bg-gray-800">
-        <CalendarStep />
+        <CalendarStep params={params} />
         {/* <ConfirmStep /> */}
       </div>
     </div>
