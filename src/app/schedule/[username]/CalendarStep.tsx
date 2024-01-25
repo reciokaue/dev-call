@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { useState } from 'react'
 
 import { Calendar } from '@/components/calendar'
+import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/axios'
 
 import { UserScheduleProps } from './page'
@@ -12,6 +13,10 @@ import { UserScheduleProps } from './page'
 interface Availability {
   possibleTimes: number[]
   availableTimes: number[]
+}
+
+interface BlockedWeekDays {
+  blockedWeekDays: number[]
 }
 
 export function CalendarStep({ params }: UserScheduleProps) {
@@ -40,9 +45,29 @@ export function CalendarStep({ params }: UserScheduleProps) {
     enabled: !!selectedDate,
   })
 
+  const { data: blockedWeekDates } = useQuery<BlockedWeekDays>({
+    queryKey: ['availability', 'blockedWeekDates'],
+    queryFn: async () => {
+      const response = await api.get(
+        `/users/${params.username}/blocked-dates`,
+        {
+          params: {
+            year: dayjs(selectedDate).format('YYYY'),
+            month: dayjs(selectedDate).format('MM'),
+          },
+        },
+      )
+      return response.data
+    },
+  })
+
   return (
     <div className="flex h-full justify-between">
-      <Calendar onDateSelected={setSelectedDate} selectedDate={selectedDate} />
+      <Calendar
+        onDateSelected={setSelectedDate}
+        selectedDate={selectedDate}
+        blockedWeekDays={blockedWeekDates?.blockedWeekDays}
+      />
 
       {isDateSelected && (
         <aside className="flex w-[280px] flex-col  border-l border-gray-600 py-6">
@@ -53,15 +78,22 @@ export function CalendarStep({ params }: UserScheduleProps) {
             <span className="h-10 " />
           </header>
           <div className="bottom-0 right-0 top-[calc(40px+6rem)] grid grid-cols-1 gap-2 overflow-y-scroll px-6 py-6">
-            {availability?.possibleTimes?.map((hour) => (
-              <button
-                disabled={!availability.availableTimes.includes(hour)}
-                key={hour}
-                className="flex  items-center justify-center rounded-md bg-gray-600 px-7 py-1 text-sm leading-relaxed text-gray-100 hover:bg-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-100 focus:ring-offset-1 disabled:pointer-events-none disabled:bg-transparent disabled:opacity-40 "
-              >
-                {hour}
-              </button>
-            ))}
+            {availability
+              ? availability?.possibleTimes?.map((hour) => (
+                  <button
+                    disabled={!availability.availableTimes.includes(hour)}
+                    key={hour}
+                    className="flex  items-center justify-center rounded-md bg-gray-600 px-7 py-1 text-sm leading-relaxed text-gray-100 hover:bg-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-100 focus:ring-offset-1 disabled:pointer-events-none disabled:bg-transparent disabled:opacity-40 "
+                  >
+                    {hour}
+                  </button>
+                ))
+              : Array.from({ length: 10 }).map((_, i) => (
+                  <Skeleton
+                    key={`skeleton-${i}`}
+                    className="h-8 w-full rounded-md"
+                  />
+                ))}
           </div>
         </aside>
       )}

@@ -7,69 +7,29 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { shortWeekDays } from '@/utils/get-week-day'
+import { getCalendarWeeks } from '@/utils/getCalendarWeeks'
 
 import { Button } from './ui/button'
 
 interface CalendarProps {
   selectedDate?: Date | null
   onDateSelected: (date: Date) => void
+  blockedWeekDays?: number[]
 }
 
-interface CalendarWeeks {
-  date: dayjs.Dayjs
-  disabled: boolean
-}
-
-export function Calendar({ onDateSelected, selectedDate }: CalendarProps) {
+export function Calendar({
+  onDateSelected,
+  selectedDate,
+  blockedWeekDays,
+}: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => {
     return dayjs().set('date', 1)
   })
 
-  const calendarWeeks = useMemo<CalendarWeeks[][]>(() => {
-    const daysInMonthArray = Array.from({
-      length: currentDate.daysInMonth(),
-    }).map((_, i) => {
-      return currentDate.set('date', i + 1)
-    })
-
-    const firstWeekDay = currentDate.get('day')
-    const lastDay = daysInMonthArray.pop()
-    const lastWeekDay = lastDay?.get('day') || 6
-
-    const previousMonthFillArray = Array.from({
-      length: firstWeekDay,
-    })
-      .map((_, i) => {
-        return currentDate.subtract(i + 1, 'day')
-      })
-      .reverse()
-
-    const nextMonthFillArray = Array.from({
-      length: 7 - (lastWeekDay + 1),
-    }).map((_, i) => {
-      return lastDay?.add(i + 1, 'day')
-    })
-
-    const disable = (array: any[], disabled: boolean) =>
-      array.map((date: dayjs.Dayjs) => {
-        const isDisabled = disabled ? true : date.endOf('day').isBefore()
-        return { date, disabled: isDisabled }
-      })
-
-    const allDays = [
-      ...disable(previousMonthFillArray, true),
-      ...disable(daysInMonthArray, false),
-      ...disable(nextMonthFillArray, true),
-    ]
-
-    const daysPerWeek = Array.from({
-      length: Math.ceil(allDays.length / 7),
-    }).map((_, i) => {
-      return allDays.slice(i * 7, i * 7 + 7)
-    })
-
-    return daysPerWeek
-  }, [currentDate])
+  const calendarWeeks = useMemo(
+    () => getCalendarWeeks(currentDate, blockedWeekDays),
+    [currentDate, blockedWeekDays],
+  )
 
   const currentMonth = currentDate.format('MMMM')
   const currentYear = currentDate.format('YYYY')
