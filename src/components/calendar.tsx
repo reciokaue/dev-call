@@ -45,14 +45,18 @@ export function Calendar({
     setCurrentDate(previousMonthDate)
   }
 
+  function handleSelectDate(date: dayjs.Dayjs) {
+    if (blocked) onDateSelected(date.toDate())
+  }
+
   const { data: blocked } = useQuery<BlockedWeekDays | null>(
     getBlockedDates(currentDate),
   )
-
   const calendarWeeks = useMemo(
     () => getCalendarWeeks(currentDate, blocked),
     [currentDate, blocked],
   )
+
   return (
     <div className="flex w-[540px] flex-col gap-6 p-6">
       <header className="flex items-center justify-between">
@@ -80,7 +84,7 @@ export function Calendar({
       </header>
       <table className="w-full table-fixed border-separate border-spacing-1">
         <thead className="text-sm font-medium uppercase leading-relaxed text-gray-200">
-          <tr className="text-left">
+          <tr className="text-center">
             {shortWeekDays.map((weekDay) => (
               <th key={weekDay}>{weekDay}</th>
             ))}
@@ -93,7 +97,7 @@ export function Calendar({
                   {week.map(({ date, disabled }) => (
                     <td className="box-border" key={date.toString()}>
                       <button
-                        onClick={() => onDateSelected(date.toDate())}
+                        onClick={() => handleSelectDate(date)}
                         disabled={disabled}
                         className="aspect-square w-full rounded-sm bg-gray-600 text-center  transition-colors hover:bg-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-100 focus:ring-offset-1 disabled:pointer-events-none disabled:bg-transparent disabled:opacity-40"
                       >

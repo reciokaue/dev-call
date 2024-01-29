@@ -8,19 +8,20 @@ import { Calendar } from '@/components/calendar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/axios'
 
-import { UserScheduleProps } from './page'
-
 interface Availability {
   possibleTimes: number[]
   availableTimes: number[]
 }
 
-interface BlockedWeekDays {
-  blockedWeekDays: number[]
-  blockedDates: number[]
+interface CalendarStepProps {
+  username: string
+  onSelectDateTime: (date: Date | null) => void
 }
 
-export function CalendarStep({ params }: UserScheduleProps) {
+export function CalendarStep({
+  username,
+  onSelectDateTime,
+}: CalendarStepProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>()
   const isDateSelected = !!selectedDate
 
@@ -35,7 +36,7 @@ export function CalendarStep({ params }: UserScheduleProps) {
   const { data: availability } = useQuery<Availability>({
     queryKey: ['availability', selectedDateString],
     queryFn: async () => {
-      const response = await api.get(`/users/${params.username}/availability`, {
+      const response = await api.get(`/users/${username}/availability`, {
         params: {
           date: dayjs(selectedDate).format('YYYY-MM-DD'),
         },
@@ -53,26 +54,31 @@ export function CalendarStep({ params }: UserScheduleProps) {
     const queryKey = ['blocked-dates', month, year]
 
     const queryFn = async () => {
-      const response = await api.get(
-        `/users/${params.username}/blocked-dates`,
-        { params: { year, month } },
-      )
+      const response = await api.get(`/users/${username}/blocked-dates`, {
+        params: { year, month },
+      })
       return response.data
     }
 
     return { queryKey, queryFn }
   }
 
+  function handleSelectTime(hour: number) {
+    const dateTime = dayjs(selectedDate)
+      .set('hour', hour)
+      .startOf('hour')
+      .toDate()
+
+    onSelectDateTime(dateTime)
+  }
+
   return (
     <div className="flex h-full justify-between">
-      {JSON.stringify(selectedDate)}
-
       <Calendar
         onDateSelected={setSelectedDate}
         selectedDate={selectedDate}
         getBlockedDates={getBlockedDates}
       />
-
       {isDateSelected && (
         <aside className="flex w-[280px] flex-col  border-l border-gray-600 py-6">
           <header className="flex items-center px-6">
@@ -87,6 +93,7 @@ export function CalendarStep({ params }: UserScheduleProps) {
                   <button
                     disabled={!availability.availableTimes.includes(hour)}
                     key={hour}
+                    onClick={() => handleSelectTime(hour)}
                     className="flex  items-center justify-center rounded-md bg-gray-600 px-7 py-1 text-sm leading-relaxed text-gray-100 hover:bg-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-100 focus:ring-offset-1 disabled:pointer-events-none disabled:bg-transparent disabled:opacity-40 "
                   >
                     {hour}
