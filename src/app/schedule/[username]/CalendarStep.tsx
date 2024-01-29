@@ -17,10 +17,11 @@ interface Availability {
 
 interface BlockedWeekDays {
   blockedWeekDays: number[]
+  blockedDates: number[]
 }
 
 export function CalendarStep({ params }: UserScheduleProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [selectedDate, setSelectedDate] = useState<Date | null>()
   const isDateSelected = !!selectedDate
 
   const weekDay = selectedDate && dayjs(selectedDate).format('dddd')
@@ -45,28 +46,31 @@ export function CalendarStep({ params }: UserScheduleProps) {
     enabled: !!selectedDate,
   })
 
-  const { data: blockedWeekDates } = useQuery<BlockedWeekDays>({
-    queryKey: ['availability', 'blockedWeekDates'],
-    queryFn: async () => {
+  function getBlockedDates(date: dayjs.Dayjs) {
+    const year = date.format('YYYY')
+    const month = date.format('MM')
+
+    const queryKey = ['blocked-dates', month, year]
+
+    const queryFn = async () => {
       const response = await api.get(
         `/users/${params.username}/blocked-dates`,
-        {
-          params: {
-            year: dayjs(selectedDate).format('YYYY'),
-            month: dayjs(selectedDate).format('MM'),
-          },
-        },
+        { params: { year, month } },
       )
       return response.data
-    },
-  })
+    }
+
+    return { queryKey, queryFn }
+  }
 
   return (
     <div className="flex h-full justify-between">
+      {JSON.stringify(selectedDate)}
+
       <Calendar
         onDateSelected={setSelectedDate}
         selectedDate={selectedDate}
-        blockedWeekDays={blockedWeekDates?.blockedWeekDays}
+        getBlockedDates={getBlockedDates}
       />
 
       {isDateSelected && (

@@ -2,34 +2,36 @@
 
 import '../lib/dayjs'
 
+import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { shortWeekDays } from '@/utils/get-week-day'
+import { shortWeekDays, weekDays } from '@/utils/get-week-day'
 import { getCalendarWeeks } from '@/utils/getCalendarWeeks'
 
 import { Button } from './ui/button'
+import { Skeleton } from './ui/skeleton'
 
 interface CalendarProps {
   selectedDate?: Date | null
   onDateSelected: (date: Date) => void
-  blockedWeekDays?: number[]
+  getBlockedDates: (date: dayjs.Dayjs) => any
+}
+
+interface BlockedWeekDays {
+  blockedWeekDays: number[]
+  blockedDates: number[]
 }
 
 export function Calendar({
   onDateSelected,
   selectedDate,
-  blockedWeekDays,
+  getBlockedDates,
 }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(() => {
     return dayjs().set('date', 1)
   })
-
-  const calendarWeeks = useMemo(
-    () => getCalendarWeeks(currentDate, blockedWeekDays),
-    [currentDate, blockedWeekDays],
-  )
 
   const currentMonth = currentDate.format('MMMM')
   const currentYear = currentDate.format('YYYY')
@@ -43,6 +45,14 @@ export function Calendar({
     setCurrentDate(previousMonthDate)
   }
 
+  const { data: blocked } = useQuery<BlockedWeekDays | null>(
+    getBlockedDates(currentDate),
+  )
+
+  const calendarWeeks = useMemo(
+    () => getCalendarWeeks(currentDate, blocked),
+    [currentDate, blocked],
+  )
   return (
     <div className="flex w-[540px] flex-col gap-6 p-6">
       <header className="flex items-center justify-between">
@@ -77,21 +87,31 @@ export function Calendar({
           </tr>
         </thead>
         <tbody className='before:block before:leading-3 before:text-gray-800 before:content-["."]'>
-          {calendarWeeks.map((week, index) => (
-            <tr key={`week-${index}`}>
-              {week.map(({ date, disabled }) => (
-                <td className="box-border" key={date.toString()}>
-                  <button
-                    onClick={() => onDateSelected(date.toDate())}
-                    disabled={disabled}
-                    className="aspect-square w-full rounded-sm bg-gray-600 text-center  transition-colors hover:bg-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-100 focus:ring-offset-1 disabled:pointer-events-none disabled:bg-transparent"
-                  >
-                    {date.format('DD')}
-                  </button>
-                </td>
+          {calendarWeeks.length > 0
+            ? calendarWeeks.map((week, index) => (
+                <tr key={`week-${index}`}>
+                  {week.map(({ date, disabled }) => (
+                    <td className="box-border" key={date.toString()}>
+                      <button
+                        onClick={() => onDateSelected(date.toDate())}
+                        disabled={disabled}
+                        className="aspect-square w-full rounded-sm bg-gray-600 text-center  transition-colors hover:bg-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-100 focus:ring-offset-1 disabled:pointer-events-none disabled:bg-transparent disabled:opacity-40"
+                      >
+                        {date.format('DD')}
+                      </button>
+                    </td>
+                  ))}
+                </tr>
+              ))
+            : Array.from({ length: 5 }).map((_, index) => (
+                <tr key={`week-${index}`}>
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <td className="box-border" key={`skeleton-calendar-${i}`}>
+                      <Skeleton className="aspect-square w-full rounded-sm" />
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
         </tbody>
       </table>
     </div>

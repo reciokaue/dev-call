@@ -39,7 +39,9 @@ export default async function UserSchedule({ params }: UserScheduleProps) {
         <h1 className="text-2xl font-bold leading-relaxed text-white">
           {user?.name}
         </h1>
-        <p className="text-sm leading-relaxed text-gray-200">{user?.bio}</p>
+        <p className="max-w-[520px] text-center text-sm leading-relaxed text-gray-200">
+          {user?.bio}
+        </p>
       </header>
       <div className="mt-6 w-auto max-w-[820px] rounded-lg border border-gray-600 bg-gray-800">
         <CalendarStep params={params} />

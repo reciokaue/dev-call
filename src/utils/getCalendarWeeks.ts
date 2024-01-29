@@ -7,8 +7,16 @@ interface CalendarWeeks {
 
 export function getCalendarWeeks(
   currentDate: dayjs.Dayjs,
-  blockedWeekDays?: number[],
+  blocked:
+    | {
+        blockedWeekDays: number[]
+        blockedDates: number[]
+      }
+    | null
+    | undefined,
 ): CalendarWeeks[][] {
+  // if (!blockedWeekDays) return []
+
   const daysInMonthArray = Array.from({
     length: currentDate.daysInMonth(),
   }).map((_, i) => {
@@ -35,10 +43,13 @@ export function getCalendarWeeks(
 
   const disable = (array: any[], disabled: boolean) =>
     array.map((date: dayjs.Dayjs) => {
-      const isDisabled = disabled
-        ? true
-        : date.endOf('day').isBefore() ||
-          (blockedWeekDays ? blockedWeekDays?.includes(date.get('day')) : true)
+      const isBefore = date.endOf('day').isBefore()
+      const isBlocked = blocked
+        ? blocked.blockedWeekDays.includes(date.get('day')) ||
+          blocked.blockedDates.includes(date.get('date'))
+        : false
+
+      const isDisabled = disabled || isBefore || isBlocked
 
       return { date, disabled: isDisabled }
     })
