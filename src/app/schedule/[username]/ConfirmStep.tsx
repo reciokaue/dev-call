@@ -3,11 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import dayjs from 'dayjs'
 import { Calendar, Clock } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { api } from '@/lib/axios'
 import {
   confirmStepSchema,
   confirmStepSchemaProps,
@@ -16,21 +18,34 @@ import {
 interface ConfirmStepProps {
   selectedDate: Date
   onSelectDateTime: (date: Date | null) => void
+  username: string
 }
 
 export function ConfirmStep({
   onSelectDateTime,
   selectedDate,
+  username,
 }: ConfirmStepProps) {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { errors },
   } = useForm<confirmStepSchemaProps>({
     resolver: zodResolver(confirmStepSchema),
   })
+  const router = useRouter()
 
-  async function handleConfirmSchedule(data: confirmStepSchemaProps) {}
+  async function handleConfirmSchedule(data: confirmStepSchemaProps) {
+    const { name, email, observations } = data
+
+    await api.post(`/users/${username}/schedule`, {
+      name,
+      email,
+      observations,
+      date: selectedDate,
+    })
+    onSelectDateTime(null)
+  }
 
   function handleCancelSchedule() {
     onSelectDateTime(null)
@@ -56,12 +71,10 @@ export function ConfirmStep({
         className="mt-6 flex flex-col gap-6"
       >
         <div className="flex flex-col justify-start gap-2 text-sm leading-relaxed">
-          <label htmlFor="">Username</label>
-          <Input prefix="dev.call/" {...register('username')} />
-          {errors.username && (
-            <span className="text-sm text-red-500">
-              {errors.username.message}
-            </span>
+          <label htmlFor="">Nome</label>
+          <Input {...register('name')} />
+          {errors.name && (
+            <span className="text-sm text-red-500">{errors.name.message}</span>
           )}
         </div>
         <div className="flex flex-col justify-start gap-2 text-sm leading-relaxed">

@@ -17,6 +17,7 @@ export default function UserSchedule({ params }: UserScheduleProps) {
   if (selectedDateTime)
     return (
       <ConfirmStep
+        username={params.username}
         selectedDate={selectedDateTime}
         onSelectDateTime={setSelectedDateTime}
       />
