@@ -15,6 +15,9 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           scope: scopes,
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
         },
       },
       profile(profile: GoogleProfile) {
